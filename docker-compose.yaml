@@ -1,0 +1,73 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini_helpdesk_app
+    working_dir: /var/www/html
+    command: sh -lc "php -S 0.0.0.0:8080 -t public"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      PHP_MEMORY_LIMIT: 512M
+
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: helpdesk
+      DB_USERNAME: helpdesk
+      DB_PASSWORD: secret
+
+      REDIS_HOST: redis
+      MAIL_HOST: mailhog
+    depends_on:
+      - db
+      - redis
+      - mailhog
+    networks:
+      - helpdesk
+
+  db:
+    image: postgres:16-alpine
+    container_name: mini_helpdesk_db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: helpdesk
+      POSTGRES_USER: helpdesk
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - helpdesk
+
+  redis:
+    image: redis:7-alpine
+    container_name: mini_helpdesk_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - helpdesk
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mini_helpdesk_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - helpdesk
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  helpdesk:
+    driver: bridge
