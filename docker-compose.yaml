@@ -23,11 +23,43 @@ services:
       DB_PASSWORD: secret
 
       REDIS_HOST: redis
+      REDIS_PORT: 6379
       MAIL_HOST: mailhog
     depends_on:
       - db
       - redis
       - mailhog
+    networks:
+      - helpdesk
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini_helpdesk_queue
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: ["php", "artisan", "queue:work", "--verbose", "--tries=3", "--timeout=90"]
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      PHP_MEMORY_LIMIT: 512M
+
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: helpdesk
+      DB_USERNAME: helpdesk
+      DB_PASSWORD: secret
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MAIL_HOST: mailhog
+    restart: always
+    depends_on:
+      - db
+      - redis
     networks:
       - helpdesk
 
