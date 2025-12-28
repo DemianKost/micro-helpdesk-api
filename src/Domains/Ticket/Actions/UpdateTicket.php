@@ -26,7 +26,7 @@ class UpdateTicket
         $this->ticketValidator->validateUpdate($attributes);
         
         return $this->transactionManager->run( function() use($ticket, $attributes) {
-            $ticket->update($attributes);
+            $ticket->lockForUpdate()->update($attributes);
             $ticket->refresh();
 
             TicketAudit::create([

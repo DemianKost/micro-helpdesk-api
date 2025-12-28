@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Src\Domains\Ticket\Controllers\TicketCommentController;
 use Src\Domains\Ticket\Controllers\TicketController;
 use Src\Domains\User\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -22,5 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{ticket}/assign', [TicketController::class, 'assign']);
         Route::put('/{ticket}', [TicketController::class, 'update']);
         Route::delete('/{ticket}', [TicketController::class, 'delete']);
+
+        Route::prefix('comments')->group( function() {
+            Route::post('/', [TicketCommentController::class, 'store']);
+            Route::put('/{ticketComment}', [TicketCommentController::class, 'update']);
+        });
     });
 });

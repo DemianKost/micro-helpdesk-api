@@ -2,7 +2,7 @@
 
 namespace Src\Domains\Ticket\Events;
 
-class TicketCreated
+class TicketCommented
 {
     
 }
