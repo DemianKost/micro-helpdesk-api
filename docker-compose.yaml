@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: mini_helpdesk_app
     working_dir: /var/www/html
-    command: sh -lc "php -S 0.0.0.0:8080 -t public & php artisan reverb:start --host='0.0.0.0' --port=8080 --hostname='laravel.test' & wait"
+    command: sh -lc "php -S 0.0.0.0:8080 -t public & php artisan reverb:start --host='0.0.0.0' --port=8081 --hostname='laravel.test' & wait"
     ports:
       - "8080:8080"
     volumes:

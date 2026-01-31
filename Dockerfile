@@ -16,7 +16,10 @@ RUN docker-php-ext-install \
     mbstring \
     zip \
     intl \
-    opcache
+    opcache \
+    pcntl
+
+RUN docker-php-ext-configure pcntl --enable-pcntl
 
 RUN pecl install redis \
     && docker-php-ext-enable redis

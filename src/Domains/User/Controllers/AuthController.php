@@ -2,15 +2,25 @@
 
 namespace Src\Domains\User\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Src\Domains\Common\Controllers\Controller;
 use Src\Domains\User\Models\User;
+use Src\Domains\User\Services\UserService;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function __construct(
+        private UserService $service
+    ) {}
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'email' => ['required','email'],
@@ -33,7 +43,11 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'name' => ['required','string','max:255'],
@@ -42,18 +56,11 @@ class AuthController extends Controller
             'role' => ['required', 'string']
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role']
-        ]);
-
-        $token = $user->createToken('default')->plainTextToken;
+        $data = $this->service->create($validated);
 
         return response()->json([
-            'user' => $user,
-            'token' => $token,
+            'user' => $data['user'],
+            'token' => $data['token'],
         ], 201);
     }
 }

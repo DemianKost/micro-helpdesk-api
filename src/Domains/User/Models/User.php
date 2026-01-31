@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Src\Domains\Ticket\Models\TicketComment;
 use Src\Domains\User\Enums\UserRole;
+use Src\Domains\Workspaces\Models\WorkspaceMember;
 
 class User extends Authenticatable
 {
@@ -55,6 +56,28 @@ class User extends Authenticatable
         return $this->hasMany(
             TicketComment::class,
             'ticket_id'
+        );
+    }
+
+    /**
+     * @return HasMany<User, User>
+     */
+    public function ownedWorkspaces(): HasMany
+    {
+        return $this->hasMany(
+            related: User::class,
+            foreignKey: 'user_id'
+        );
+    }
+
+    /**
+     * @return HasMany<WorkspaceMember, User>
+     */
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(
+            related: WorkspaceMember::class,
+            foreignKey: 'user_id'
         );
     }
 
