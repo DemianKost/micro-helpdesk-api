@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Src\Domains\Ticket\Models\Ticket;
 
-class TicketResolved implements ShouldBroadcastNow
+class TicketStatusUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, SerializesModels, InteractsWithSockets;
 
@@ -24,7 +24,7 @@ class TicketResolved implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'resolved';
+        return 'status_updated';
     }
 
     public function broadcastWith(): array

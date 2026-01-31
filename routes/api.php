@@ -29,4 +29,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{ticketComment}', [TicketCommentController::class, 'update']);
         });
     });
+
+    
 });

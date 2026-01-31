@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Src\Domains\Common\Support\TransactionManager;
 use Src\Domains\Ticket\Enums\TicketStatus;
 use Src\Domains\Ticket\Events\TicketResolved;
+use Src\Domains\Ticket\Events\TicketStatusUpdated;
 use Src\Domains\Ticket\Models\Ticket;
 use Src\Domains\Ticket\Models\TicketAudit;
 use Src\Domains\Ticket\Policies\TicketPolicy;
@@ -51,6 +52,8 @@ class TransitionTicketStatus
                 'to_status'   => $ticketStatus->value,
                 'meta'        => null,
             ]);
+
+            event( new TicketStatusUpdated($ticket) );
 
             return $ticket->refresh();
         });
