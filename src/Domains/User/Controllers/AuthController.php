@@ -9,11 +9,13 @@ use Illuminate\Validation\ValidationException;
 use Src\Domains\Common\Controllers\Controller;
 use Src\Domains\User\Models\User;
 use Src\Domains\User\Services\UserService;
+use Src\Domains\User\Services\UserValidatorService;
 
 class AuthController extends Controller
 {
     public function __construct(
-        private UserService $service
+        private UserService $service,
+        private UserValidatorService $validator
     ) {}
 
     /**
@@ -22,10 +24,7 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'email' => ['required','email'],
-            'password' => ['required','string'],
-        ]);
+        $validated = $this->validator->validateLogin($request->all());
 
         $user = User::where('email', $validated['email'])->first();
 
@@ -49,12 +48,7 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => ['required','string','max:255'],
-            'email' => ['required','email','max:255','unique:users,email'],
-            'password' => ['required','string','min:8','confirmed'],
-            'role' => ['required', 'string']
-        ]);
+        $validated = $this->validator->validateCreate($request->all());
 
         $data = $this->service->create($validated);
 
