@@ -5,7 +5,7 @@ namespace Src\Domains\Common\Support;
 use Closure;
 use Illuminate\Support\Facades\DB;
 
-class TransactionManager
+final class TransactionManager
 {
     public function run(
         Closure $callback,
