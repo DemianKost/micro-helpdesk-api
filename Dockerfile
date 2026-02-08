@@ -4,11 +4,15 @@ RUN apk add --no-cache \
     bash \
     git \
     unzip \
+    curl \
+    ca-certificates \
     icu-dev \
     oniguruma-dev \
     libzip-dev \
     postgresql-dev \
     $PHPIZE_DEPS
+
+RUN docker-php-ext-configure pcntl --enable-pcntl
 
 RUN docker-php-ext-install \
     pdo_pgsql \
@@ -19,9 +23,8 @@ RUN docker-php-ext-install \
     opcache \
     pcntl
 
-RUN docker-php-ext-configure pcntl --enable-pcntl
-
-RUN pecl install redis \
+RUN pecl channel-update pecl.php.net \
+    && pecl install redis \
     && docker-php-ext-enable redis
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -30,5 +33,4 @@ RUN addgroup -g 1000 -S www \
     && adduser  -u 1000 -S www -G www
 
 WORKDIR /var/www/html
-
 USER www
