@@ -8,13 +8,15 @@ use Src\Domains\Ticket\Enums\TicketAction;
 use Src\Domains\Ticket\Models\Ticket;
 use Src\Domains\Ticket\Models\TicketAudit;
 use Src\Domains\Ticket\Policies\TicketPolicy;
+use Src\Domains\Ticket\Services\TicketEventService;
 use Src\Domains\Ticket\Services\TicketValidator;
 
 class UpdateTicket
 {
     public function __construct(
         private TicketValidator $ticketValidator,
-        private TransactionManager $transactionManager
+        private TransactionManager $transactionManager,
+        private TicketEventService $ticketEventService
     ) {}
 
     public function execute(array $attributes, Ticket $ticket)
@@ -40,6 +42,8 @@ class UpdateTicket
                     'new_description' => $attributes['description'] ?? ''
                 ])
             ]);
+
+            $this->ticketEventService->create($ticket);
 
             return $ticket;
         });

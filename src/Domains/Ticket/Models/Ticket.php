@@ -71,4 +71,15 @@ class Ticket extends Model
             foreignKey: 'assignee_id'
         );
     }
+
+    /**
+     * @return HasMany<TicketEvent, Ticket>
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(
+            related: TicketEvent::class,
+            foreignKey: 'ticket_id'
+        );
+    }
 }
